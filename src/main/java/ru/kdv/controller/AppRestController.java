@@ -1,10 +1,8 @@
 package ru.kdv.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.kdv.entity.Person;
+import ru.kdv.error.person.PersonNotFoundException;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -22,7 +20,7 @@ public class AppRestController {
     }
 
     @PostConstruct
-    public void loadData(){
+    public void loadData() {
         persons = asList(new Person("Aaaa", "BBBb"),
                 new Person("Vaaa", "BBDZFSBb"),
                 new Person("Baaa", "DDFBBBb"));
@@ -32,8 +30,12 @@ public class AppRestController {
     public List<Person> getPersons() {
         return persons;
     }
+
     @GetMapping("/person/{personId}")
-    public Person gerPerson(@PathVariable int personId){
+    public Person gerPerson(@PathVariable int personId) {
+        if (personId > persons.size() || personId < 0) {
+            throw new PersonNotFoundException("Person not found");
+        }
         return persons.get(personId);
     }
 }
